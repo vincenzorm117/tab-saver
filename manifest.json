@@ -7,6 +7,8 @@
         "bookmarks"
     ],
     "icons": {
+        "16": "icon_16.png",
+        "128": "icon_128.png"
     },
     "browser_action": {
         "default_title": "Show Tabs in this Process",
