@@ -73,24 +73,30 @@ const formattedDate = () => {
     return `${date}-${month}-${year}--${hours}:${mins}:${secs}`;
 }
 
-chrome.runtime.onMessage.addListener(() => {
-    chrome.tabs.query({ currentWindow: true }, (tabs) => {
-        GetFolder().then(rootFolder => {
-            window.localStorage.setItem('folder', JSON.stringify(rootFolder));
-            chrome.bookmarks.create({
-                parentId: rootFolder.id,
-                title: `Saved - ${formattedDate()}`
-            }, (folder) => {
-                for(let tab of tabs) {
-                    chrome.bookmarks.create({
-                        parentId: folder.id,
-                        title: tab.title,
-                        index: tab.index,
-                        url: tab.url
-                    }, () => {})
-                }
+chrome.runtime.onMessage.addListener(({ type }) => {
+    if( type == 'save' ) {
+        chrome.tabs.query({ currentWindow: true }, (tabs) => {
+            GetFolder().then(rootFolder => {
+                window.localStorage.setItem('folder', JSON.stringify(rootFolder));
+                chrome.bookmarks.create({
+                    parentId: rootFolder.id,
+                    title: `Saved - ${formattedDate()}`
+                }, (folder) => {
+                    for(let tab of tabs) {
+                        chrome.bookmarks.create({
+                            parentId: folder.id,
+                            title: tab.title,
+                            index: tab.index,
+                            url: tab.url
+                        }, () => {})
+                    }
+                });
             });
         });
-    });
+    } else {
+        chrome.tabs.query({ currentWindow: true }, (tabs) => {
+            tabs.map(tab => chrome.tabs.remove(tab.id))
+        });
+    }
 });
 

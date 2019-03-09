@@ -1,6 +1,8 @@
 
+// Saves tab for window
+chrome.runtime.sendMessage({type: 'save'}, () => {})
 
-chrome.runtime.sendMessage({}, (response) => {
-    console.log(response)
+// Signals to close window
+document.addEventListener('click', function(){
+    chrome.runtime.sendMessage({type: 'close-window'}, () => {})
 })
-
